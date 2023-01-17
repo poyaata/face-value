@@ -1,0 +1,24 @@
+% In the name of God
+% fmri (normalizing FSL beta maps and contrsts to the temporal mean of voxel's BOLD activity):
+3dcalc -a stats/cope1.nii.gz -b mean_func.nii.gz -expr 'a/(abs(b)+1)*astep(b,200)*100' -prefix c1.nii.gz
+
+% fmri group analysis:
+3dttest++ -setA  sub1/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz sub2/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz \
+sub3/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz sub4/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz \
+sub5/dcm2ni/exp5g+.feat/reg_standard/c9.nii.gz sub6/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz \
+sub7/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz sub8/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz \
+sub9/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz sub10/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz \
+sub11/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz sub12/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz \
+sub13/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz sub14/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz \
+sub15/sanei/exp5g.feat/reg_standard/c9.nii.gz  sub16/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz \
+sub17/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz sub18/dcm2ni/exp5g.feat/reg_standard/c9.nii.gz  -prefix avgrighl2 -resid res_righl2
+
+% fmri cluster correction:
+
+3dcalc -a avgrighl2+tlrc -b /home/ataei/Desktop/mni_3mm/grey5.nii.gz -expr 'a*b' -prefix righl2.nii.gz
+
+3dFWHMx -acf -mask ~/Desktop/mni_3mm/grey5.nii.gz -input res_righl2+tlrc
+ 
+3dClustSim -mask ~/Desktop/mni_3mm/grey5.nii.gz -acf  0.348376  4.42647  9.16653 -pthr 0.001 0.01 .02 .03 .04 .05 -athr 0.05 -prefix clust_righl2
+
+
